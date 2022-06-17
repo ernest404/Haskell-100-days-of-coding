@@ -41,4 +41,4 @@ square n = n * n
 -- the number is odd, the function returns 3 × n + 1. To check whether the number is even,
 -- you can use either Haskell’s even function or mod (Haskell’s modulo function).
 
-oddEven n = if mod 2 n then n-2 else 3 * n +1
+oddEven n = if mod n 2 == 0 then n-2 else 3 * n +1
