@@ -20,3 +20,11 @@ bodyPart title = "Thanks for buying " ++ title ++ "\nthanks,\n"
 fromPart author = "from "++ author ++"."
 
 createEmail recipient title author = toPart recipient ++ bodyPart title ++ fromPart author
+
+
+-- Fill in the missing part of the following where clause:
+-- doublePlusTwo x = doubleX + 2
+-- where doubleX = __________
+
+doublePlusTwo x = doubleX + 2
+    where doubleX = x *2
