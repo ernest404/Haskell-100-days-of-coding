@@ -1,4 +1,5 @@
 module Main where
+import Data.Time.Format.ISO8601 (yearFormat)
 
 main :: IO()
 main = do
@@ -42,3 +43,18 @@ square n = n * n
 -- you can use either Haskell’s even function or mod (Haskell’s modulo function).
 
 oddEven n = if mod n 2 == 0 then n-2 else 3 * n +1
+
+-- Quick check 3.2 Rewrite the following function to use a lambda function in place of where:
+-- doubleDouble x = dubs*2
+--  where dubs = x*2
+
+doubleDouble x = (\x -> x * 2) (x*2)
+
+-- Function with multiple arguments
+add :: (Int, Int) -> Int
+add (x, y) = x+y
+
+-- Same function implemented as as curried function
+add' :: Int -> Int -> Int
+add' x y = x+y
+
