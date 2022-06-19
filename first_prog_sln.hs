@@ -58,3 +58,20 @@ add (x, y) = x+y
 add' :: Int -> Int -> Int
 add' x y = x+y
 
+-- signum function using case
+-- signum :: Int -> Int
+-- signum x = case x of (x < 0) -> -1
+--                      (x == 0) -> 0
+--                      (x > 0) -> 1
+
+
+-- not function implementation
+not' :: Bool -> Bool
+not' x = case x of True -> False
+                   False -> True                  
+
+-- Using library functions, define a function halve :: [a] -> ([a],[a]) that splits an evenlengthed
+-- list into two halves.
+
+halve :: [a] -> ([a], [a])
+halve xs = 
