@@ -74,4 +74,4 @@ not' x = case x of True -> False
 -- list into two halves.
 
 halve :: [a] -> ([a], [a])
-halve xs = 
+halve xs = if even (length xs) then splitAt (length xs `div` 2) xs else ([], [])
