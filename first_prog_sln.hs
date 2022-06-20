@@ -90,3 +90,5 @@ third xs = head
 (*) :: Int -> Int -> Int
 x * 0 = 0
 x * y = x + (x * (y-1))
+
+-- recursion on lists
