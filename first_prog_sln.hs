@@ -97,10 +97,12 @@ halve xs = if even (length xs) then splitAt (length xs `div` 2) xs else ([], [])
 -- Gimbalambs community
 
 -- Higher order function
+
 -- multiplyListBy3 = multiplyList 3 where
 --     multiplyList m [] = []
 --     multiplyList m (y:ys) = m*y : multiplyList m ys
 
+-- Same as above
 multiplyList m [] = []
 multiplyList m (y:ys) = m*y : multiplyList m ys
 multiplyListBy3 = multiplyList 3
