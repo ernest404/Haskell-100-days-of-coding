@@ -79,19 +79,28 @@ halve xs = if even (length xs) then splitAt (length xs `div` 2) xs else ([], [])
 -- 2. Define a function third :: [a] -> a that returns the third element in a list that contains at least
 -- this many elements using:
 -- a. head and tail;
-third :: [a] -> a
-third xs = head
+
+
 -- b. list indexing !!;
 -- c. pattern matching.
 
 
 -- Using recursion show that multiplication * can multiplication can be reduced to repeated addition.
 
-(*) :: Int -> Int -> Int
-x * 0 = 0
-x * y = x + (x * (y-1))
+-- (*) :: Int -> Int -> Int
+-- x * 0 = 0
+-- x * y = x + (x * (y-1))
 
 -- recursion on lists
 
 
 -- Gimbalambs community
+
+-- Higher order function
+-- multiplyListBy3 = multiplyList 3 where
+--     multiplyList m [] = []
+--     multiplyList m (y:ys) = m*y : multiplyList m ys
+
+multiplyList m [] = []
+multiplyList m (y:ys) = m*y : multiplyList m ys
+multiplyListBy3 = multiplyList 3
