@@ -102,7 +102,7 @@ halve xs = if even (length xs) then splitAt (length xs `div` 2) xs else ([], [])
 --     multiplyList m [] = []
 --     multiplyList m (y:ys) = m*y : multiplyList m ys
 
--- Same as above
+-- Same as aboveghci
 multiplyList m [] = []
 multiplyList m (y:ys) = m*y : multiplyList m ys
 multiplyListBy3 = multiplyList 3
