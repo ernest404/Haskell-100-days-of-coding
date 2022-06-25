@@ -110,3 +110,41 @@ add' x y = x + y
 length' :: [a] -> Int
 length' xs = length xs
 
+-- 1. By Combining one or more existing functions.
+even :: Integral a => a -> Bool
+even n = n `mod`` 2 == 0
+
+-- 2. Conditional expressions
+sign :: (Num a) => a -> String
+sign x = if x < 0 then "negative" else
+		if x > 0 then " positive " else "zero"
+
+-- 3.Guarded equations: alternative to conditional
+sign :: (Num a) => a -> String
+sign x
+ | x < 0 = "negative"
+ | x == 0 = "zero"
+ | otherwise = "positive"
+
+-- 4.Pattern matching
+day :: (Integral a) => a -> String
+day 1 = "Monday"
+day 2 = "Tuesday"
+day 3 = "Wednesday"
+day 4 = "Thursday"
+day 5 = "Friday"
+day 6 = "Saturday"
+day 7 = "Sunday"
+day _ = "The week has only 7 days!"
+
+-- 5.Case expressions
+day :: (Integral a) => a -> String
+day x = case x of 1 -> "Monday"
+                  2 -> "Tuesday"
+                  3 -> "Wednesday"
+                  4 -> "Thursday"
+                  5 -> "Friday"
+                  6 -> "Saturday"
+                  7 -> "Sunday"
+                  _ -> "The week has only 7 days!
+
