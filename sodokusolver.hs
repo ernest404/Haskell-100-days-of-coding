@@ -7,7 +7,7 @@ type Grid = Matrix Value
 type Matrix a = [Row a]
 type Row a = [a]
 type Value = Char
--- Grid = [[a]]
+-- Grid = [[Char]]
 
 -- Example of how this works
 
@@ -34,10 +34,10 @@ cols = transpose
 
 -- cols.cols = id  gets you back to the same point.
 
--- boxs helper function: extracts boxs as list of rows. A box is store as a row.
-boxs :: Matrix a -> [Row a]
-boxs = transpose
--- boxs.boxs = id
+-- boxes helper function: extracts boxs as list of rows. A box is store as a row.
+boxes :: Matrix a -> [Row a]
+boxes = transpose
+-- boxes.boxes = id
 
 valid :: Grid -> Bool
 valid g = all nodups (rows g) && all nodups (cols g) && all nodups (boxs g) 
@@ -45,3 +45,7 @@ valid g = all nodups (rows g) && all nodups (cols g) && all nodups (boxs g)
 nodups :: Eq a =>  [a] -> Bool
 nodups [] = True
 nodups (x:xs) = not (elem x xs) && nodups xs
+
+solve :: Grid ->[Grid] --takes a sodoku puzzle grid and returns a list of all possible solution grid.
+solve = filter valid.collapse.choices --this is function composition it is same as saying solve g = filter valid (collapse(choices g))
+
