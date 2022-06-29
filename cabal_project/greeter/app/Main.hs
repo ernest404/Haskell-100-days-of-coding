@@ -1,4 +1,6 @@
 module Main where
 
+import HaskellSay (haskellSay)
+
 main :: IO ()
-main = putStrLn "Hello, Haskell!"
+main = haskellSay "Hello, Haskell! You're using a function from another package !"
