@@ -19,3 +19,10 @@ lamu2 :: Pair Float
 lamu2 = (2.2696, 40.9006)
 
 -- Type declarations can be nested:
+type Pos = (Int, Int)
+type Trans = Pos -> Pos
+
+-- 2.Data declarations
+-- Declares a completely new type.
+data Bool' = Uongo | Ukweli deriving
+
