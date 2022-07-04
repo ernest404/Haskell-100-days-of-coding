@@ -83,15 +83,16 @@ fmap3 :: (a -> b -> c -> d) -> fa -> fb -> fc -> fd
 -- We can generalize these into two functions
 
 pure :: a -> fa -- pure converts a value of type a into a data structure that implements the functor class like list, maybe and Tree
-(<*>) :: f(a -> b) -> fa -> fb --infix operator.-- generalized form of function application, by taking a datastructure f(a->b) and another datastructure fa to produce a datastructure fb.
+(<*>) :: f(a -> b) -> fa -> fb --infix operator.-- generalized form of function application, by taking a data structure f(a->b) and another datastructure fa to produce a datastructure fb.
 
+-- We use the two functions apply a function of any kind to a Functor data structure
 pure g <*> x <*> y <*> z --This is applicative style: we are applying function g to x then to y then z
 
 -- same as:
 
 g x y z = (((g x) y) z)
 
--- Defining fmap0
+-- Defining fmap0 by generalizing
 fmap0 :: a -> fa
 fmap0 = pure
 
@@ -124,13 +125,12 @@ y = fb
 
 -}
 
--- Applicative Functors
-class Functor f => Applicative f where --applicative works with ds that implement functor class
+-- Applicative Functors definition
+class Functor f => Applicative f where --applicative functors works with ds that are instances of the Functor class
     pure :: a -> f a
     (<*>) :: f (a->b) -> f a -> f b
 
--- Example: Maybe applicative: applies a non error function to datastructures
-
+-- Example: Maybe applicative: 
 instance Applicative Maybe where
     -- pure :: a -> Maybe a : Maybe is already an instance of f functor(pure :: a -> f a)
     pure x = Just x
@@ -140,13 +140,13 @@ instance Applicative Maybe where
 
 -- Gives us ability to apply pure functions to arguments that can fail.Exception in programming.
 
--- Example: list applicative: applies a list of functions(function with more than one parameter) to a list
+-- Example: list applicative: 
 instance Applicative [] where
     -- pure :: a -> [a]
     pure x = [x]
     --  <*> :: [a-b] -> [a] -> [b] ......is same as saying  <*> :: [] (a-b) -> [] a -> [] b 
     gs <*> xs = [g x | g <- gs, x <- xs]
 
-pure (*) <*> [1,2] <*> [3,4] -- give us all possible ways of a apply
+pure (*) <*> [1,2] <*> [3,4] -- give us all possible values of the function apply
 
 -- Give ability to non-deterministically apply pure functions to multivalued arguements
