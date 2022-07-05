@@ -125,8 +125,8 @@ y = fb
 
 -}
 
--- Applicative Functors definition
-class Functor f => Applicative f where --applicative functors works with ds that are instances of the Functor class
+-- Applicative Functors definition- generalized functors to apply functions with more with more than one arguements.
+class Functor f => Applicative f where --In order to be an applicative we have to be instance of the Functor class and have the two functions below.
     pure :: a -> f a
     (<*>) :: f (a->b) -> f a -> f b
 
@@ -138,7 +138,11 @@ instance Applicative Maybe where
     Nothing <*> mx = Nothing
     (Just g) <*> mx = fmap g mx
 
--- Gives us ability to apply pure functions to arguments that can fail.Exception in programming.
+-- Gives us ability to apply pure functions to arguments that have ability to fail. Exception in programming.
+just_3 = pure (+) <*> Just 1 <*> Just 2
+
+nothing = pure (+) <*> Nothing <*> Just 2
+
 
 -- Example: list applicative: 
 instance Applicative [] where
@@ -150,3 +154,5 @@ instance Applicative [] where
 pure (*) <*> [1,2] <*> [3,4] -- give us all possible values of the function apply
 
 -- Give ability to non-deterministically apply pure functions to multivalued arguements
+
+-- In general applicative functors apply functions to effectfull arguments.
