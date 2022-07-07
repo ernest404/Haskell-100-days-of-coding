@@ -30,7 +30,7 @@ eval'' (Div x y) = case eval x of
 
 eval'' :: Expr -> Maybe Int
 eval (Val n) = pure n
-eval (Div x y) = pure safediv <*> eval x <*> eval y
+eval (Div x y) = pure safediv <*> eval x <*> eval y                                                                                                                                                                                             
 
 {-
 but eval function does not fit the style of applicative.
