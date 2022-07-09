@@ -1,0 +1,46 @@
+NPM: Node Package manager
+Used to manage packages for applications.
+
+
+Install npm: 
+    install node: sudo apt install nodejs
+    check node version: node -v
+
+    install npm: sudo apt install npm
+    check node version: npm -v
+Update npm:
+    Run: npm install -g npm@7.8.0.
+    7.8.0 is the version you want to update to.
+    
+npm is a package manager like cabal.
+Create a new project by creating a new project folder then cd to it and initialize npm using: npm init
+
+Install packages: like express. These packages will appear in the package.json file and downloaded to the node_modules with all its dependancies. Using npm install.
+Anyone with this file can install the same packages(dependancies) that your project needs in their computer.
+package-lock.json enables you to install the exact version
+This means there is no need to commit the node_modules folder.
+
+Package version: x.x.x example 1.3.4 is traslates to major_release.minor_release.patch version.
+content-type: "~1.0.4": means that there is compatibilty with all patch updates and not minor or major release.
+"express": "^4.17.1": means that there is compatibilty with minor release and patch update. No compatibilty with the next major release.
+npm will only install packeges with minor or patch updates
+
+Create a new react app: npx create-react-app my-react-app.
+Inside that directory, you can run several commands:
+  npm start
+    Starts the development server.
+  npm run build
+    Bundles the app into static files for production.
+  npm test
+    Starts the test runner.
+  npm run eject
+    Removes this tool and copies build dependencies, configuration files
+    and scripts into the app directory. If you do this, you can’t go back!
+We suggest that you begin by typing:
+  cd my-react-app
+  npm start
+
+devdependancies: dependencies only needed for development, production version of project does not need that.
+
+Install NPM dependecy as devDependency by using: npm install -D <package name> or npm install --save-dev <package name>
+
