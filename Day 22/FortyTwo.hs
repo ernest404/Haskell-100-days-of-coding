@@ -1,4 +1,5 @@
-{-# LANGUAGE DataKinds           #-}
+-- Language extensions are used to enable language features in Haskell that may seem useful in certain cases. They can be used to loosen restrictions in the type system or add completely new language constructs to Haskell. 
+{-# LANGUAGE DataKinds           #-} --it allows you to use types as if they were kinds, and values as if they were types.
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE NoImplicitPrelude   #-}
 {-# LANGUAGE OverloadedStrings   #-}
