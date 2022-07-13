@@ -34,7 +34,7 @@ import           Text.Printf         (printf)
 
 {-# INLINABLE mkValidator #-}
 mkValidator :: BuiltinData -> BuiltinData -> BuiltinData -> ()
-mkValidator _ r _
+mkValidator _ r _,
     | r == Builtins.mkI 42 = ()
     | otherwise            = traceError "wrong redeemer!"
 
