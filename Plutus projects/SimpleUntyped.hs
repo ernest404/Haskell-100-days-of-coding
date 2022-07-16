@@ -31,10 +31,26 @@ mkValidator _ _ _ = () --We don't care about the value of the 3 arguments, we wi
 validator :: Validator
 validator = mkValidatorScript $$(PlutusTx.compile [|| mkValidator ||]) -- $$ is a splicer: 
 
--- we get the validator script hash using validatorHash function from the package Scripts
+-- we get the validator script hash using validatorHash function from the package Scripts. We are going to use it to build a transaction.
 valhash :: Legder.validatorHash
 valHash = Scripts.validatorHash validator
 
 -- we get the validator script address directly using scriptAddress function
 scrAddress :: Ledger.address
 scrAddress = scriptAddress validator
+
+type GiftSchema = 
+        Endpoint "give" Integer
+    .\/ Endpoint "grab" () -- .\/ is used to join the two endpoints.
+
+give :: AsContractError e => Integer -> Contract w s e ()
+give amount = do
+    -- mustPayToOtherScript: locks the value v in lovelace with the given script hash vh alongside a datum d of Type Builtins. This operation is saved as tx to be executed in the next line.
+    let tx = mustPayToOtherScript valHash (Datum $ Builtins.mkI 0) $ Ada.lovelaceValueOf amount 
+    -- Build a transaction that satisfies the constraints above, then submit it to the network.
+    ledgerTx <- submitTx tx
+    -- get the transaction id of the above transaction. 
+    -- Wait until a transaction is confirmed (added to the ledger) this returns value of type Contract wse(). If the transaction is never added to the ledger then awaitTxConfirmed never returns.
+    -- value discards or ignores the result of evaluation, such as the return value of a Contract monad action
+    void $ awaitTxConfirmed $ getCardanoTxId ledgerTx
+    --
