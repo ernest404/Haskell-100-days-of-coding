@@ -53,4 +53,15 @@ give amount = do
     -- Wait until a transaction is confirmed (added to the ledger) this returns value of type Contract wse(). If the transaction is never added to the ledger then awaitTxConfirmed never returns.
     -- value discards or ignores the result of evaluation, such as the return value of a Contract monad action
     void $ awaitTxConfirmed $ getCardanoTxId ledgerTx
-    --
+    -- Logs a message at the Info level of the wallet.
+    -- the type indicator introduced by @ relates to the type of the input taken by logInfo. logInfo :: ToJSON a => a -> Contract w s e ()
+    -- https://stackoverflow.com/questions/30326249/what-does-mean-in-haskell
+    logInfo @String "Sucessfully locked %d lovelace" amount
+
+grab :: forall w s e. AsContractError e -> Contract w s e ()
+grab = do
+    -- Gets the unspent transaction outputs at the script address. utxosAt :: forall w s e. AsContractError e => Address -> Contract w s e (Map TxOutRef ChainIndexTxOut) 
+    -- Use <- to get the result (Map TxOutRef ChainIndexTxOut) in the contract monad. ChainIndexTxOut: List of outputs of a transaction. TxOutRef: A reference to a transaction output. 
+    utxos <- utxosAt scrAddress
+    let orefs = fst <$> Map.toList utxos
+

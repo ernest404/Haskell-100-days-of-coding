@@ -63,7 +63,14 @@ merkle = Node (Leaf 1) (Leaf 2)
 instance Functor Tree where
     fmap g (Leaf x) = Leaf (g x)
     fmap g (Node l r) = Node (fmap g l) (fmap g r)
- 
+
+-- IO Functor
+instance Functor IO where
+    -- fmap :: (a->b) -> IO a -> IO b
+    fmap g io_action = do
+        result <- io_action -- gives us the value from an IO action
+        return (g result) -- return converts result of type a into a an IO action.
+
 -- Why use Functors
 -- We can use same name, fmap for functions that are essentially the same.
 -- We can define a generic function that can be applied to many types that implement the functor class.
@@ -82,8 +89,9 @@ fmap3 :: (a -> b -> c -> d) -> fa -> fb -> fc -> fd
 
 -- We can generalize these into two functions
 
-pure :: a -> fa -- pure converts a value of type a into a data structure that implements the functor class like list, maybe and Tree
-(<*>) :: f(a -> b) -> fa -> fb --infix operator.-- generalized form of function application, by taking a data structure f(a->b) and another datastructure fa to produce a datastructure fb.
+pure :: a -> f a -- pure converts a value of type a into a data structure that implements the functor class like list, maybe and Tree
+(<*>) :: f(a -> b) -> f a -> f b --infix operator.-- generalized form of function application, by taking a data structure f(a->b) and another datastructure fa to produce a data 
+structure fb.
 
 -- We use the two functions apply a function of any kind to a Functor data structure
 pure g <*> x <*> y <*> z --This is applicative style: we are applying function g to x then to y then z
