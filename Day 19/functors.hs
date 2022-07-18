@@ -78,7 +78,7 @@ inc = fmap (+1)
 
 -- Applicative Functor
 
--- Generalising fmap for the number of different parameters.
+-- Generalising fmap to apply functions to number different parameters.
 
 {-
 fmap0 :: a -> fa : fmap on a function with no arguments(constant) returns same value as of type class functor.
@@ -87,11 +87,10 @@ fmap2 :: (a -> b -> c) -> fa -> fb -> fc
 fmap3 :: (a -> b -> c -> d) -> fa -> fb -> fc -> fd
 -}
 
--- We can generalize these into two functions
+-- We can generalize these into two methods under applicative type class.
 
 pure :: a -> f a -- pure converts a value of type a into a data structure that implements the functor class like list, maybe and Tree
-(<*>) :: f(a -> b) -> f a -> f b --infix operator.-- generalized form of function application, by taking a data structure f(a->b) and another datastructure fa to produce a data 
-structure fb.
+(<*>) :: f(a -> b) -> f a -> f b --infix operator.-- generalized form of function application, by taking a data structure f(a->b) and another datastructure fa to produce a data  structure fb.
 
 -- We use the two functions apply a function of any kind to a Functor data structure
 pure g <*> x <*> y <*> z --This is applicative style: we are applying function g to x then to y then z
@@ -134,7 +133,7 @@ y = fb
 -}
 
 -- Applicative Functors definition- generalized functors to apply functions with more with more than one arguements.
-class Functor f => Applicative f where --In order to be an applicative we have to be instance of the Functor class and have the two functions below.
+class Functor f => Applicative f where --In order to be part of applicative type class we have to be an instance of the Functor class and implement the two functions below.
     pure :: a -> f a
     (<*>) :: f (a->b) -> f a -> f b
 
@@ -143,7 +142,7 @@ instance Applicative Maybe where
     -- pure :: a -> Maybe a : Maybe is already an instance of f functor(pure :: a -> f a)
     pure x = Just x
     -- (<*>) :: Maybe (a->b) -> Maybe a -> Maybe b
-    Nothing <*> mx = Nothing
+    Nothing <*> _ = Nothing
     (Just g) <*> mx = fmap g mx
 
 -- Gives us ability to apply pure functions to arguments that have ability to fail. Exception in programming.

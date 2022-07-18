@@ -63,5 +63,9 @@ grab = do
     -- Gets the unspent transaction outputs at the script address. utxosAt :: forall w s e. AsContractError e => Address -> Contract w s e (Map TxOutRef ChainIndexTxOut) 
     -- Use <- to get the result (Map TxOutRef ChainIndexTxOut) in the contract monad. ChainIndexTxOut: List of outputs of a transaction. TxOutRef: A reference to a transaction output. 
     utxos <- utxosAt scrAddress
+    -- Map.toList utxos: takes all the (TxOutRef ChainIndexTxOut) pairs and puts them in a list. fst returns the first value from the pair.
+    -- This grabs the first utxo at the script address.
     let orefs = fst <$> Map.toList utxos
+        lookups = Constraints.unspentOutputs utxos <>
+                  Constraints.OtherScript validator
 
