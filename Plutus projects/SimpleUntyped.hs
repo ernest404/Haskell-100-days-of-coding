@@ -66,6 +66,12 @@ grab = do
     -- Map.toList utxos: takes all the (TxOutRef ChainIndexTxOut) pairs and puts them in a list. fst returns the first value from the pair.
     -- This grabs the first utxo at the script address.
     let orefs = fst <$> Map.toList utxos
-        lookups = Constraints.unspentOutputs utxos <>
-                  Constraints.OtherScript validator
+
+ --"The "constraints" specify what properties the transaction should have.
+-- The "lookups" allow the algorithm to actually construct a transaction with those properties.
+-- So if a property is "consume that script output", then in order to construct the transaction, the algorithm needs to know the script belonging to that address.
+        lookups = Constraints.unspentOutputs utxos <> --A script lookups value that uses the map of unspent outputs to resolve input constraints.
+                  Constraints.OtherScript validator --A script lookups value with a validator script.
+        tx :: TxConstraints Void Void --construct transaction using the constraints above
+        tx = mc
 
