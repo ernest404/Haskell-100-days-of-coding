@@ -64,7 +64,7 @@ grab = do
     -- Use <- to get the result (Map TxOutRef ChainIndexTxOut) in the contract monad. ChainIndexTxOut: List of outputs of a transaction. TxOutRef: A reference to a transaction output. 
     utxos <- utxosAt scrAddress
     -- Map.toList utxos: takes all the (TxOutRef ChainIndexTxOut) pairs and puts them in a list. fst returns the first value from the pair.
-    -- This grabs the first utxo at the script address.
+    -- This grabs the first utxo at the script address. not sure.
     let orefs = fst <$> Map.toList utxos
 
  --"The "constraints" specify what properties the transaction should have.
@@ -73,5 +73,44 @@ grab = do
         lookups = Constraints.unspentOutputs utxos <> --A script lookups value that uses the map of unspent outputs to resolve input constraints.
                   Constraints.OtherScript validator --A script lookups value with a validator script.
         tx :: TxConstraints Void Void --construct transaction using the constraints above
-        tx = mc
+-- The transaction must spend the given unspent transaction script output.
+-- mustSpendScriptOutput: this constraint adds utxo(s) and redeemer as an input to the transaction. Information about this utxo must be provided in the ScriptLookups with unspentOutputs. The validator must be either provided by unspentOutputs or through otherScript. The datum must be either provided by unspentOutputs or through otherData.
+-- mustSpendScriptOutput :: forall i o. TxOutRef -> Redeemer -> TxConstraints i o : i - inputs and o - outputs
+-- The output of this function is a singleton containing TxConstraint of each utxo at the script.
+--  Since there could be several singleton TxConstraints produced we use mconcat to flatten the list from list of singleton lists of TxConstraints. 
+-- txConstraints :: [TxConstraint] 
+-- txOwnInputs :: [ScriptInputConstraint i] 
+-- txOwnOutputs :: [ScriptOutputConstraint o]
+-- mconcat is a monoid method that takes flattens the list of constraints 
+        tx      = mconcat [mustSpendScriptOutput oref $ Redeemer $ Builtins.mkI 17 | oref <- orefs] 
+    -- Build a transaction that satisfies the constraints, then submit it to the network. Using the given constraints.    
+    -- submitTxConstraintsWith :: ScriptLookups a -> TxConstraints (RedeemerType a) (DatumType a) -> Contract w s e CardanoTx
+    -- <- gets the result from constract wsea monad: CardanoTx
+    ledgerTx <- submitTxConstraintsWith @Void lookups tx
+    -- get Traction id.
+    -- Wait until a transaction is confirmed (added to the ledger). If the transaction is never added to the ledger then awaitTxConfirmed never returns. 
+    -- awaitTxConfirmed :: forall w s e. AsContractError e => TxId -> Contract w s e () 
+    -- value discards or ignores the result of evaluation, such as the return value of an contract action (contract wse()) from awaitTxConfirmed 
+    void $ awaitTxConfirmed $ getCardanoTxId ledgerTx
+    logInfo @String $ "collected gifts"
 
+endpoints :: Contract () GiftSchema Text ()
+-- awaitPromise: A wrapper indicating that this contract starts with a waiting action. For use with select. awaitPromise :: Promise w s e a -> Contract w s e a 
+-- select returns the contract that makes progress first, discarding the other one.
+-- >>: Sequentially compose two actions, discarding any value produced by the first, like sequencing operators (such as the semicolon) in imperative languages.
+-- The function calls itself again exposing the endpints 
+endpoints = awaitPromise (give' `select` grab') >> endpoints
+    where
+        -- Expose an endpoint, return the data that was entered.
+        -- endpoint :: forall l a w s e b. (HasEndpoint l a s, AsContractError e, FromJSON a) => (a -> Contract w s e b) -> Promise w s e b 
+        give' = endpoint @"give" give
+        grab' = endpoint @"grab" $ const grab
+
+-- 
+mkSchemaDefinitions ''GiftSchema
+
+mkKnownCurrencies []
+
+
+
+        
