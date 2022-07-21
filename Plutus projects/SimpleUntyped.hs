@@ -1,3 +1,13 @@
+{-# LANGUAGE DataKinds           #-}
+{-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE NoImplicitPrelude   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TemplateHaskell     #-}
+{-# LANGUAGE TypeApplications    #-} --the extension allows you to give explicit type arguments to a polymorphic function such as read
+{-# LANGUAGE TypeFamilies        #-}
+{-# LANGUAGE TypeOperators       #-}
+
+
 module SimpleUntyped where
 
 import           Control.Monad       hiding (fmap)
@@ -52,7 +62,7 @@ give amount = do
     -- get the transaction id of the above transaction. 
     -- Wait until a transaction is confirmed (added to the ledger) this returns value of type Contract wse(). If the transaction is never added to the ledger then awaitTxConfirmed never returns.
     -- value discards or ignores the result of evaluation, such as the return value of a Contract monad action
-    void $ awaitTxConfirmed $ getCardanoTxId ledgerTx
+    void $ awaitTxConfirmed $ getCardanoTxId ledgerTx --https://typeclasses.com/featured/dollar#:~:text=The%20dollar%20sign%2C%20%24%2C%20is%20a%20controversial%20little,not%20via%20its%20type%20but%20via%20its%20precedence
     -- Logs a message at the Info level of the wallet.
     -- the type indicator introduced by @ relates to the type of the input taken by logInfo. logInfo :: ToJSON a => a -> Contract w s e ()
     -- https://stackoverflow.com/questions/30326249/what-does-mean-in-haskell
