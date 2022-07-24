@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE NoImplicitPrelude   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TemplateHaskell     #-}
+{-# LANGUAGE TemplateHaskell     #-} --
 {-# LANGUAGE TypeApplications    #-} --the extension allows you to give explicit type arguments to a polymorphic function such as read
 {-# LANGUAGE TypeFamilies        #-}
 {-# LANGUAGE TypeOperators       #-}
