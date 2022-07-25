@@ -1,8 +1,8 @@
 {-# LANGUAGE DataKinds           #-}
-{-# LANGUAGE FlexibleContexts    #-}
-{-# LANGUAGE NoImplicitPrelude   #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TemplateHaskell     #-} --
+{-# LANGUAGE FlexibleContexts    #-} 
+{-# LANGUAGE NoImplicitPrelude   #-} 
+{-# LANGUAGE ScopedTypeVariables #-} -- Enables you to write an explicit type signature for any sub-term of a function. https://serokell.io/blog/universal-and-existential-quantification
+{-# LANGUAGE TemplateHaskell     #-} --Introduces metaprogramming capabilities of Haskell. It is mostly useful for generating boilerplate code and automating some aspects of the compilation: https://serokell.io/blog/introduction-to-template-haskell
 {-# LANGUAGE TypeApplications    #-} --the extension allows you to give explicit type arguments to a polymorphic function such as read
 {-# LANGUAGE TypeFamilies        #-}
 {-# LANGUAGE TypeOperators       #-}
