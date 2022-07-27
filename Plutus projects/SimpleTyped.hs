@@ -1,4 +1,4 @@
-{-# LANGUAGE DataKinds           #-}
+{-# LANGUAGE DataKinds           #-} -- lets you promote data types to kinds and data constructors to types. The intuition is that, just like types can be considered sets of values, kinds can be considered sets of types.
 {-# LANGUAGE FlexibleContexts    #-} 
 {-# LANGUAGE NoImplicitPrelude   #-} 
 {-# LANGUAGE ScopedTypeVariables #-} -- Enables you to write an explicit type signature for any sub-term of a function. https://serokell.io/blog/universal-and-existential-quantification
