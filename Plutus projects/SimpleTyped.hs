@@ -1,5 +1,5 @@
 {-# LANGUAGE DataKinds           #-} -- lets you promote data types to kinds and data constructors to types. The intuition is that, just like types can be considered sets of values, kinds can be considered sets of types.
-{-# LANGUAGE FlexibleContexts    #-} 
+{-# LANGUAGE FlexibleContexts    #-} -- Remove the type-variable restriction on class contexts.
 {-# LANGUAGE NoImplicitPrelude   #-} 
 {-# LANGUAGE ScopedTypeVariables #-} -- Enables you to write an explicit type signature for any sub-term of a function. https://serokell.io/blog/universal-and-existential-quantification
 {-# LANGUAGE TemplateHaskell     #-} --Introduces metaprogramming capabilities of Haskell. It is mostly useful for generating boilerplate code and automating some aspects of the compilation: https://serokell.io/blog/introduction-to-template-haskell
@@ -42,7 +42,7 @@ instance Scripts.ValidatorTypes Typed where
 -- At Compile time we want to convert the haskell mkValidator function to a plutus Validator.(Has plutus script embeded to it)
 
 typedValidator :: Scripts.TypedValidator Typed
-typedValidator = Scripts.mkTypedValidator @Typed -- used to force a type decision to polymorphic functions.
+typedValidator = Scripts.mkTypedValidator @Typed -- used to force a type decision to polymorphic functions.(Forcing mkTypedValidator to be of type typed.)
     $$(PlutusTx.compile [|| mkValidator ||])
     $$(PlutusTx.compile [|| wrap ||]) -- offers translation between high and low level types for compilation to Plutus script and back.
   where
