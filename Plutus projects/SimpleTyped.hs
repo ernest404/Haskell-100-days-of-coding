@@ -1,11 +1,11 @@
 {-# LANGUAGE DataKinds           #-} -- lets you promote data types to kinds and data constructors to types. The intuition is that, just like types can be considered sets of values, kinds can be considered sets of types.
 {-# LANGUAGE FlexibleContexts    #-} -- Remove the type-variable restriction on class contexts.
-{-# LANGUAGE NoImplicitPrelude   #-} 
+{-# LANGUAGE NoImplicitPrelude   #-} -- used to disable the prelude from being implicitly imported by GHC.https://typeclasses.com/ghc/no-implicit-prelude.This is because we want to make use of plutus preluded which is better suited for our implementation.
 {-# LANGUAGE ScopedTypeVariables #-} -- Enables you to write an explicit type signature for any sub-term of a function. https://serokell.io/blog/universal-and-existential-quantification
 {-# LANGUAGE TemplateHaskell     #-} --Introduces metaprogramming capabilities of Haskell. It is mostly useful for generating boilerplate code and automating some aspects of the compilation: https://serokell.io/blog/introduction-to-template-haskell
 {-# LANGUAGE TypeApplications    #-} --the extension allows you to give explicit type arguments to a polymorphic function such as read
-{-# LANGUAGE TypeFamilies        #-}
-{-# LANGUAGE TypeOperators       #-}
+{-# LANGUAGE TypeFamilies        #-} -- used to support ad-hoc overloading of data types.It is useful for generic programming, for creating highly parameterised library interfaces, and for creating interfaces with enhanced static information, much like dependent types
+{-# LANGUAGE TypeOperators       #-} --makes it possible to use an operator as the name of a type. https://typeclasses.com/ghc/type-operators
 
 
 module SimpleUntyped where
