@@ -35,7 +35,7 @@ import           Text.Printf         (printf)
 mkValidator :: () -> Integer -> ScriptContext -> Bool
 mkValidator _ r _ = traceIfFalse "Wrong Redeemer" --Validation fails with error
 
-data Typed --records that datum and redeemer are using high level types
+data Typed --records that datum and redeemer are using high level types.
 instance Scripts.ValidatorTypes Typed where
     type instance DatumType Typed= ()
     type instance RedeemerType Typed = Integer
