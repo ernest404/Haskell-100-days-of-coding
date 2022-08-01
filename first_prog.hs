@@ -12,5 +12,5 @@ messyMain = do
     print ("Dear " ++ recipient ++ ",\n" ++
         "Thanks for buying " ++ title ++ "\nthanks,\n" ++
         author )
--- Everything works fine, but it’d be much easier to work with if this code was broken up a bit.
+-- Everything works fine, but it’d be much easier to work with if this code was broken up a bit
    
