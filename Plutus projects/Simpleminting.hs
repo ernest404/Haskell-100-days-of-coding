@@ -40,7 +40,7 @@ policy :: Scripts.MintingPolicy
 --We use Template Haskell to compile mkPolicy function to plutus core. So make sure it is inlinable 
 policy = mkMintingPolicyScript $$(PlutusTx.compile [|| Scripts.wrapMintingPolicy mkPolicy ||])
 
--- Now that we have a policy, we can get a currency symbol from the policy.We can call curSymbol in cabal repl to have a look at the currency symbol.
+-- Now that we have a policy, we can get a currency symbol from the policy this is used to c.We can call curSymbol in cabal repl to have a look at the currency symbol.
 curSymbol :: CurrencySymbol
 curSymbol = scriptCurrencySymbol policy
 
@@ -51,22 +51,32 @@ data MintParams = MintParams
     } deriving (Generic, ToJSON, FromJSON, ToSchema)
 -- if the mpAmount is positive, we should create tokens, and if it is negative, we should burn tokens.
 
+-- Define the schema which carries the available actions we can take in the wallet
 type FreeSchema = Endpoint "mint" MintParams
 
+-- Build the mint action transaction.
+--Remember Contract monad takes four type parameters. The first is the writer monad which allows us to use a tell function. By leaving this parametric with a small w, we indicate that we will not be making use of this parameter - we won’t tell any state.
+--The next parameter is the schema: we pass FreeSchema which gives us access to the regular block chain actions, as well as the mint endpoint.
+--The third parameter is the type of error message, and as we have seen, Text works fine.
+--Finally, the last parameter is the return type, and our contract will just have the Unit return type.
 mint :: MintParams -> Contract w FreeSchema Text ()
-mint mp = do
+-- First we define the value that we want to forge. For this we are using the singleton function whose arguments are currencysymbol, tokenname and an Integer.
+-- Currecysymbol is from hashing the policy, tokenname and Integer amount are passed along with the action mint. 
+-- 
+mint mp = do -- we use do notation because this function produces a monadic type and we use it to glue together monadic values in sequence.
     let val     = Value.singleton curSymbol (mpTokenName mp) (mpAmount mp)
-        lookups = Constraints.mintingPolicy policy
-        tx      = Constraints.mustMintValue val
-    ledgerTx <- submitTxConstraintsWith @Void lookups tx
-    void $ awaitTxConfirmed $ getCardanoTxId ledgerTx
-    Contract.logInfo @String $ printf "forged %s" (show val)
+        lookups = Constraints.mintingPolicy policy --specify properties the transaction should have based on the policy as lookups. 
+        tx      = Constraints.mustMintValue val --specifies to the tx to mint the token val specified 
+    ledgerTx <- submitTxConstraintsWith @Void lookups tx --Build a transaction that satisfies the constraints, then submit it to the network. Using the given constraints.
+    void $ awaitTxConfirmed $ getCardanoTxId ledgerTx --Wait until a transaction of a certain TxId is confirmed (added to the ledger). If the transaction is never added to the ledger then awaitTxConfirmed never returns
+    Contract.logInfo @String $ printf "forged %s" (show val) --Log a message at the Info level
 
 endpoints :: Contract () FreeSchema Text ()
 endpoints = mint' >> endpoints
   where
-    mint' = awaitPromise $ endpoint @"mint" mint
+    mint' = awaitPromise $ endpoint @"mint" mint --endpoint: Exposes an endpoint, return the data that was entered.
 
+-- structures the contract actions in a way that is suitable for consumption by the Playground's website
 mkSchemaDefinitions ''FreeSchema
 
 mkKnownCurrencies []
