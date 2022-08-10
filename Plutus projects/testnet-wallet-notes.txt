@@ -1,3 +1,22 @@
+Creating keys for one address:
+cardano-cli address key-gen --verification-key-file FILE.vkey --signing-key-file FILE.skey
+
+Build payment address
+cardano-cli address build --payment-verification-key-file FILE.vkey --testnet-magic 1097911063 --out-file FILE.addr
+
+To view the contents of payment address:
+cat FILE.addr
+
+Note: testnet network magic 1097911063 is found in testnet-shelley-genesis.json file
+
+Get test Ada here: https://testnets.cardano.org/en/testnets/cardano/tools/faucet/
+
+You can check if your address received the Ada by querying the UTxOs sitting at your addess:
+cardano-cli query utxo --testnet-magic 1097911063 --address address_from_FILE.addr or $(cat FILE.addr)
+Node has to be running.
+
+Process of sending a transaction: 
+You can build a shell script to make work easier: https://www.freecodecamp.org/news/shell-scripting-crash-course-how-to-write-bash-scripts-in-linux/
 
 Build a Transaction:
 
