@@ -518,7 +518,7 @@ birthYear => 2021 - birthYear; //implicit return when there is no braces for fun
 (birthYear => 2021 - birthYear)(1996)
 
 // The right way is to store the function in a variable.This makes it easiy callable.
-const calcAge3 = birthYear => 2021 - birthYear;
+const calcAge3 = birthYear => 2021 - birthYear; // only if we have one expression
 const age3 = calcAge3(1996);
 console.log(age3);
 
@@ -923,3 +923,6 @@ const tip = billValue >= 50 && billValue <= 300 ? billValue * 0.15 : billValue *
 console.log(`The bill was ${billValue}, the tip was ${billValue >= 50 && billValue <= 300 ? billValue * 0.15 : billValue * 0.2} and the total value ${billValue + tip}`);
 
 // Falsy values: 0, "", null, undefined
+
+// Exports and imports
+
