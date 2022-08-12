@@ -714,7 +714,16 @@ console.log(hobbies);
 hobbies.pop();
 console.log(hobbies);
 
-// array variables
+// array methods
+
+//     map()  => https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+//     find()  => https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+//     findIndex()  => https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
+//     filter()  => https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+//     reduce()  => https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce?v=b
+//     concat()  => https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat?v=b
+//     slice()  => https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
+//     splice()  => https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
 
 
 
@@ -924,5 +933,114 @@ console.log(`The bill was ${billValue}, the tip was ${billValue >= 50 && billVal
 
 // Falsy values: 0, "", null, undefined
 
-// Exports and imports
+// Class 
+
+class Human {
+    constructor() {
+        this.gender = 'male';
+    }
+    printGender() {
+        console.log(this.gender);
+    }
+}
+
+// A constructor is a special function that creates and initializes an object instance of a class and set values for existing object properties
+// In JavaScript, a constructor gets called when an object is created using the new keyword. 
+
+class Person extends Human { //Person inherents Human's properties and methods
+    constructor() {
+        super(); //The super keyword is used to call the constructor of the parent class (Human) so as to access the parent's properties and methods
+        this.name = 'Max'; //“This” keyword refers to an object that is executing the current piece of code
+    }
+    printMyname(){
+        console.log(this.name);
+    }
+}
+
+const me = new Person();
+
+me.printMyname();
+me.printGender();
+
+// Class: in next gen JS ES7 (ES6/Babel)
+// Spares the use of constructor function.
+// method is property holding an arrow function
+
+class Human {
+    gender = 'male';
+
+    printGender = () => console.log(this.gender); 
+}
+
+
+class Person extends Human { //Person inherents Human's properties and methods
+    name = 'Max'; //no this and no super()
+
+    printMyname = () => {
+        console.log(this.name);
+    }
+}
+
+const you = new Person();
+
+you.printMyname();
+you.printGender();
+
+// Spread and Rest Operator ...
+// It is the same operator ..., it's spread and rest functionality depends on where we use it.
+// Spread is used to decompose arrays or objects into thier array elements or object properties
+
+const oldArray = [1,2,3,4];
+const newArray = [...oldArray, 5, 6] //if the oldarray has element 5 it will be overwritten by 5 in the current array.
+const newArray2 = [oldArray, 5, 6] // without the 3 dots, the whole array would inserted as one element. [[1,2,3,4], 5,6]
+// same applies for objects.
+const person_1 = {
+    name : 'Max'
+}
+
+const newPerson = {
+    ...person_1,
+    age: 26
+}
+
+// Rest : Used to merge a list of function arguments into an array
+
+const filter = (...args) => args.filter(el => el === 1);
+
+console.log(filter(1,2,3,4,1,3,1));
+
+// Destructuring
+// Allows easy extracting of array elements or object properties and store them in variables.
+
+// Array Destructuring
+
+[a, ,b] = ['Hello', 'Max', 'Kim'];
+console.log(a); //Hello
+console.log(b); //Kim
+
+// Object Destructuring
+{name1} = {name:'Max', age:26}
+console.log(name1); //Max
+console.log(age); //undefined
+
+// Reference and Primitive Types
+// Primitive types
+const number = 1;
+const num2 = number; //copies the number from number variable.
+
+//  Referenced type
+const person1 = {
+    name : 'Max'
+}
+
+const secondPerson = person1;//copies the reference to person1, changes in person1 will also take effect in secondperson
+
+person1.name = 'Ernest';
+
+const secondPerson = person1;// Ernest
+
+// Copying is not possible with reassignment
+const secondPerson = {...person1};
+
+
 
