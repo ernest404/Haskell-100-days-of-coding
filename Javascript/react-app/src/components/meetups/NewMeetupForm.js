@@ -11,7 +11,7 @@ function NewMeetupForm(props) {
 
   function submitHandler(event) {
     //other functions with lowercase
-    event.preventDefault();
+    event.preventDefault(); //prevents html from submitting a form
 
     const enteredTitle = titleInputRef.current.value;
     const enteredImage = imageInputRef.current.value;
@@ -19,12 +19,13 @@ function NewMeetupForm(props) {
     const enteredDescription = descriptionInputRef.current.value;
 
     const meetupData = {
+      //organise data as an object
       title: enteredTitle,
       image: enteredImage,
       address: enteredAddress,
       description: enteredDescription,
     };
-    props.onAddMeetup(meetupData);
+    props.onAddMeetup(meetupData); //pass meetupData to the onAddMeetup prop function in the parent component where we use it.
   }
   return (
     <Card>
