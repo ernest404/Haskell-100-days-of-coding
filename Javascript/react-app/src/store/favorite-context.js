@@ -29,6 +29,7 @@ export function FavoritesContextProvider(props) {
     //
     return userFavorites.some((meetup) => meetup.id === meetupId);
   }
+
   const context = {
     favorites: userFavorites,
     totalFavorites: userFavorites.length,

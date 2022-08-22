@@ -6,6 +6,7 @@ function FavoritesPage(params) {
   const favoritesCtx = useContext(FavoritesContext);
 
   let content;
+
   if (favoritesCtx.totalFavorites === 0) {
     content = <p>No favourites</p>;
   } else {

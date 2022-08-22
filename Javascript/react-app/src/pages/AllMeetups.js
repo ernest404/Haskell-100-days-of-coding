@@ -24,6 +24,7 @@ import { useState, useEffect } from "react";
 function AllMeetupsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadedMeetups, setLoadedMeetups] = useState([]);
+
   useEffect(() => {
     setIsLoading(true);
     fetch(
@@ -36,6 +37,7 @@ function AllMeetupsPage() {
       .then((data) => {
         //gets the promise of JS object fron previous step and executes the functions to handle this result.
         const meetups = [];
+
         for (const key in data) {
           const meetup = {
             id: key,
