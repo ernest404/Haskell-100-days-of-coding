@@ -2,10 +2,10 @@
 {-# LANGUAGE FlexibleContexts    #-} -- Remove the type-variable restriction on class contexts.
 {-# LANGUAGE NoImplicitPrelude   #-} -- used to disable the prelude from being implicitly imported by GHC.https://typeclasses.com/ghc/no-implicit-prelude.This is because we want to make use of plutus preluded which is better suited for our implementation.
 {-# LANGUAGE ScopedTypeVariables #-} -- Enables you to write an explicit type signature for any sub-term of a function. https://serokell.io/blog/universal-and-existential-quantification
-{-# LANGUAGE TemplateHaskell     #-} --Introduces metaprogramming capabilities of Haskell. It is mostly useful for generating boilerplate code and automating some aspects of the compilation: https://serokell.io/blog/introduction-to-template-haskell
-{-# LANGUAGE TypeApplications    #-} --the extension allows you to give explicit type arguments to a polymorphic function such as read
+{-# LANGUAGE TemplateHaskell     #-} -- Introduces metaprogramming capabilities of Haskell. It is mostly useful for generating boilerplate code and automating some aspects of the compilation: https://serokell.io/blog/introduction-to-template-haskell
+{-# LANGUAGE TypeApplications    #-} -- the extension allows you to give explicit type arguments to a polymorphic function such as read
 {-# LANGUAGE TypeFamilies        #-} -- used to support ad-hoc overloading of data types.It is useful for generic programming, for creating highly parameterised library interfaces, and for creating interfaces with enhanced static information, much like dependent types
-{-# LANGUAGE TypeOperators       #-} --makes it possible to use an operator as the name of a type. https://typeclasses.com/ghc/type-operators
+{-# LANGUAGE TypeOperators       #-} -- makes it possible to use an operator as the name of a type. https://typeclasses.com/ghc/type-operators
 
 
 module SimpleUntyped where
@@ -68,13 +68,14 @@ give amount = do
     -- mustPayToOtherScript: locks the value v in lovelace with the given script hash vh alongside a datum d of Type Builtins. This operation is saved as tx to be executed in the next line.
     let tx = mustPayToOtherScript valHash (Datum $ Builtins.mkI 0) $ Ada.lovelaceValueOf amount 
     -- Build a transaction that satisfies the constraints above, then submit it to the network.
+    -- <- extracts the Cardano Tx from the monadic result to ledgerTx
     ledgerTx <- submitTx tx
     -- get the transaction id of the above transaction. 
     -- Wait until a transaction is confirmed (added to the ledger) this returns value of type Contract wse(). If the transaction is never added to the ledger then awaitTxConfirmed never returns.
-    -- value discards or ignores the result of evaluation, such as the return value of a Contract monad action
+    -- void discards or ignores the result of evaluation, such as the return value of a Contract monad action
     void $ awaitTxConfirmed $ getCardanoTxId ledgerTx --https://typeclasses.com/featured/dollar#:~:text=The%20dollar%20sign%2C%20%24%2C%20is%20a%20controversial%20little,not%20via%20its%20type%20but%20via%20its%20precedence
     -- Logs a message at the Info level of the wallet.
-    -- the type indicator introduced by @ relates to the type of the input taken by logInfo. logInfo :: ToJSON a => a -> Contract w s e ()
+    -- the type indicator introduced by @ forces logInfo to accept values of Type String. logInfo :: ToJSON a => a -> Contract w s e ()
     -- https://stackoverflow.com/questions/30326249/what-does-mean-in-haskell
     logInfo @String "Sucessfully locked %d lovelace" amount
 
@@ -132,5 +133,23 @@ mkSchemaDefinitions ''GiftSchema
 mkKnownCurrencies []
 
 
+{- Note [Contract endpoints]
+A contract endpoint is a function that uses the wallet API to interact with the
+blockchain. We can look at contract endpoints from two different points of view.
+1. Contract users
+Contract endpoints are the visible interface of the contract. They provide a
+UI (HTML form) for entering the parameters of the actions we may take as part
+of the contract.
+2. Contract authors
+As contract authors we define endpoints as functions that return a value of
+type 'MockWallet ()'. This type indicates that the function uses the wallet API
+to produce and spend transaction outputs on the blockchain.
 
+Endpoints can have any number of parameters: 'lock' has two
+parameters, 'guess' has one and 'startGame' has none. For each endpoint we
+include a call to 'mkFunction' at the end of the contract definition. This
+causes the Haskell compiler to generate a schema for the endpoint. The Plutus
+Playground then uses this schema to present an HTML form to the user where the
+parameters can be entered.
+-}
         
