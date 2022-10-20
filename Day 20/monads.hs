@@ -1,5 +1,5 @@
 -- Monads 
--- Just like functors involves observing a common pattern and abstracting it out.
+-- Just like functors involve observing a common pattern and abstracting it out.
 
 -- Example: a simple evaluator
 
@@ -9,7 +9,7 @@ eval' :: Expr -> Int
 eval' (Val n) = n
 eval' (Div x y) = eval x `div` eval y
 
--- problem is it does not deal with division by 0, which will make the program fail.
+-- problem is div does not deal with division by 0, which will make the program fail in such a scenario.
 
 -- First define a safe version of div, handles division by 0
 safediv :: Int -> Int -> Maybe Int
