@@ -65,7 +65,7 @@ mint :: MintParams -> Contract w FreeSchema Text ()
 -- 
 mint mp = do -- we use do notation because this function produces a monadic type and we use it to glue together monadic values in sequence.
     let val     = Value.singleton curSymbol (mpTokenName mp) (mpAmount mp)
-        lookups = Constraints.mintingPolicy policy --specify properties the transaction should have based on the policy as lookups. 
+        lookups = Constraints.mintingPolicy policy --Script lookups: specify pieces of data that the script interacts with. Minting policies, Unspent outputs that the script may want to spend etc: https://playground.plutus.iohkdev.io/doc/haddock/plutus-ledger-constraints/html/Ledger-Constraints-OffChain.html#t:ScriptLookups 
         tx      = Constraints.mustMintValue val --specifies to the tx to mint the token val specified 
     ledgerTx <- submitTxConstraintsWith @Void lookups tx --Build a transaction that satisfies the constraints, then submit it to the network. Using the given constraints.
     void $ awaitTxConfirmed $ getCardanoTxId ledgerTx --Wait until a transaction of a certain TxId is confirmed (added to the ledger). If the transaction is never added to the ledger then awaitTxConfirmed never returns
