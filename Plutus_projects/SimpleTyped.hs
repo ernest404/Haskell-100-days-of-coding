@@ -35,10 +35,14 @@ import           Text.Printf         (printf)
 mkValidator :: () -> Integer -> ScriptContext -> Bool
 mkValidator _ r _ = traceIfFalse "Wrong Redeemer" --Validation fails with error
 
+-- A new type that encodes the types of the datum and the redeemer to.Typed is an arbitary name. It does need data constructors becuase we are never going to use or don't need data of this type
+-- It is just needed to provide an instance of the class Scripts.ValidatorTypes.
+-- class Scripts.ValidatorTypes (a :: Type): A class that associates a type standing for a connection type with two types, the type of the redeemer and the data script for that connection type.
 data Typed --records that datum and redeemer are using high level types.
-instance Scripts.ValidatorTypes Typed where
-    type instance DatumType Typed= ()
-    type instance RedeemerType Typed = Integer
+instance Scripts.ValidatorTypes Typed where --
+    type instance DatumType Typed= () --type RedeemerType a :: Type: The type of the redeemers of this connection type. type synonym for ()
+    type instance RedeemerType Typed = Integer --type DatumType a :: Type: The type of the data of this connection type.
+
 -- At Compile time we want to convert the haskell mkValidator function to a plutus Validator.(Has plutus script embeded to it)
 
 typedValidator :: Scripts.TypedValidator Typed
