@@ -158,6 +158,9 @@ updateIfWith predicate fn xs =
 utxoIsGettingSpent :: [TxInInfo] -> TxOutRef -> Bool
 utxoIsGettingSpent inputs oref =
   -- {{{
+-- txInInfoOutRef: Returns the TxOutRef of TxIn txInInfoOutRef :: TxOutRef
+-- this get compared if they match the txoutref of the utxo.
+-- This determins if the utxo is getting spent.
   any ((== oref) . txInInfoOutRef) inputs
   -- }}}
 
