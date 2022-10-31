@@ -95,15 +95,15 @@ import           Utils --Provides types and functions defined in the module Util
 -- {{{
 data QVFParams = QVFParams
   { qvfKeyHolder      :: PubKeyHash --The public key hash of the QVF key holder.
-  , qvfSymbol         :: CurrencySymbol --The currency symbol of the QVF token.
+  , qvfSymbol         :: CurrencySymbol --The currency symbol of the QVF governance token.
   , qvfProjectSymbol  :: CurrencySymbol --The currency symbol of the QVF project token.
   , qvfDonationSymbol :: CurrencySymbol --The currency symbol of the QVF donation token.
   }
 
 -- Make QVFParams an instance of the Show typeclass.
--- To be printed as a dictionary.
+-- To be printed as a dictionary like map.
 instance Show QVFParams where
-  show QVFParams{..} =
+  show QVFParams{..} = --this will implicitly write for every parameter of QVFParams if you write {..} when we do record pattern matching.
          "QVFParams"
     P.++ "\n  { qvfKeyHolder      = " P.++ show qvfKeyHolder
     P.++ "\n  , qvfSymbol         = " P.++ show qvfSymbol
@@ -112,14 +112,14 @@ instance Show QVFParams where
     P.++ "\n  }"
 
 
-PlutusTx.makeLift ''QVFParams --a Template Haskell statement that generates an instance of the PlutusTx.Lift.Class.Lift class for QVFParams. This class is used by the Plutus compiler at compile-time to construct Plutus core programs.
+PlutusTx.makeLift ''QVFParams --a Template Haskell statement that generates an instance of the PlutusTx.Lift.Class.Lift class for QVFParams. This class is used by the Plutus compiler at compile-time to construct Plutus core programs and types.
 -- }}}
 
 
 -- QVF VALIDATOR 
 -- {{{
-{-# INLINABLE mkQVFValidator #-} --Inlinable pragma used to trick the PlutusTx oxford brackets into thinking mkQVFValidator function is defined in the oxford brackets.
--- mkQVFValidator function that takes QVFParams, datum(QVFDatum), redeemer(QVFAction) and context values and returns a Bool value.
+{-# INLINABLE mkQVFValidator #-} --Inlinable pragma is used to trick the PlutusTx oxford brackets into thinking mkQVFValidator function is defined in the oxford brackets.
+-- mkQVFValidator function is used to make the QVF script.It that QVFParams(parameterizer), datum(QVFDatum), redeemer(QVFAction) and context values and returns a Bool value.
 mkQVFValidator :: QVFParams
                -> QVFDatum
                -> QVFAction
@@ -128,48 +128,46 @@ mkQVFValidator :: QVFParams
 mkQVFValidator QVFParams{..} datum action ctx =
   -- {{{
   let
-    info   = scriptContextTxInfo ctx --gets the values txinfo field from the script context.
+    info   = scriptContextTxInfo ctx --gets the values of txinfo field from the script context(txinfo, txpurpose).
 
-    inputs = txInfoInputs info --gets the TxInInfo field ie Transaction inputs of current transaction.
+    inputs = txInfoInputs info --gets the Transaction inputs (TxInInfo field) of current transaction.
 
-    -- | The UTxO currently being validated.
+    -- | Get the UTxO currently being validated.
     currUTxO :: TxOut
     currUTxO =
       -- {{{
         -- Calling findOwnInput finds the input to script currently being validated..
       case findOwnInput ctx of
-        Nothing ->
-          traceError "Couldn't find UTxO."
-        Just i  ->
-          txInInfoResolved i --The txInInfoResolved function gets UTxO from the TxInInfo field provided by findOwnInput.
+        Nothing -> traceError "Couldn't find UTxO." --if no TxInInfo field is returned throw an error message.
+        Just i  -> txInInfoResolved i --If TxInInfo field is found, run txInInfoResolved function to get the UTxO from the TxInInfo field..
       -- }}}
 
-    -- | Script's address.
+    -- | Get Script's address.
     ownAddr :: Address
     ownAddr =
       -- {{{
-      txOutAddress currUTxO --which is the addess of the UTxO currently being validated.
+      txOutAddress currUTxO --Get the addess of the UTxO currently being validated.This utxo is held at the script address.
       -- }}}
 
     -- | Checks if a given UTxO is in fact from this contract.
     utxoSitsAtScript :: TxOut -> Bool
     utxoSitsAtScript =
       -- {{{
-      (== ownAddr) . txOutAddress --Checks if the address of the given UTxO is the same as the script's address.
+      (== ownAddr) . txOutAddress --Checks if the address of a given UTxo is the script's address.Returns true or false.
       -- }}}
 
-    -- | Checks for key holder's signature. Induced laziness.
+    -- | Checks for key holder's signature in a transaction. Induced laziness.
     signedByKeyHolder :: Bool
     signedByKeyHolder =
       -- {{{
       traceIfFalse "Unauthorized." $ txSignedBy info qvfKeyHolder --txSignedBy :: TxInfo -> PubKeyHash -> Bool. Checks if the transaction is signed by the public key hash provided.
       -- }}}
 
-    -- | Checks if the UTxO currently being validated carries a single X asset.
+    -- | Checks if the UTxO currently being validated carries a single asset X.
     currUTxOHasX :: CurrencySymbol -> TokenName -> Bool
     currUTxOHasX sym tn =
       -- {{{
-      utxoHasOnlyX sym tn currUTxO --where is the logic for this function?
+      utxoHasOnlyX sym tn currUTxO --where is the logic for this function? utility.hs
       -- }}}
 
     -- | Tries to find a singular asset with a given symbol inside the given
@@ -177,24 +175,22 @@ mkQVFValidator QVFParams{..} datum action ctx =
     getTokenNameOfUTxO :: CurrencySymbol -> TxOut -> Maybe TokenName
     getTokenNameOfUTxO sym utxo =
       -- {{{
-      case flattenValue (txOutValue utxo) of --The value of a transaction output.The flattenValue function returns a list of triples of currency symbol, token name and integer value.
-        [(sym', tn', amt'), _] ->
+      case flattenValue (txOutValue utxo) of -- utxo is of type TxOut which is a record with txOutAddress :: Address,txOutValue :: Value, txOutDatumHash :: Maybe DatumHash.  Get the value of a transaction output.The flattenValue function returns a list of triples of currency symbol, token name and integer value.
+        [(sym', tn', amt'), _] -> --if there is some value check if the currsymbol is one passed to function and the amount is 1
           -- {{{
           if sym' == sym && amt' == 1 then
-            Just tn'
+            Just tn' --if the a bove is the case return the token name
           else
-            Nothing
+            Nothing --else nothing
           -- }}}
-        _                      ->
+        _                      -> -- if there are no values types in return nothing
           -- {{{
           Nothing
           -- }}}
       -- }}}
 
-    -- | Tries to find a singular asset with a given symbol inside the UTxO
-    --   that is currently being validated, and returns its token name.
-    --
-    --   Raises exception upon failure.
+    -- | Tries to find a singular asset with a given symbol inside the UTxO currently being validated, and returns its token name.
+    --   Raises exception upon failure. Makes use of getTokenNameOfUTxO function and the currUTxO
     getCurrTokenName :: CurrencySymbol -> TokenName
     getCurrTokenName sym =
       -- {{{
@@ -203,19 +199,16 @@ mkQVFValidator QVFParams{..} datum action ctx =
         Nothing -> traceError "Current UTxO is unauthentic."
       -- }}}
 
-    -- | Looks inside the reference inputs and extracts the inline datum
-    --   attached to one of which carries the given asset.
-    --
-    --   Raises exception if the reference input, or the datum is not found.
+    -- | Looks inside the reference inputs and extracts the inline datum attached to one of which carries an asset X.
     getDatumFromRefX :: CurrencySymbol -> TokenName -> QVFDatum
     getDatumFromRefX sym tn =
       -- {{{
-      case find (utxoHasX sym (Just tn) . txInInfoResolved) (txInfoReferenceInputs info) of --Finds the first element of a list of referenced inputs (txInfoReferenceInputs info) that satisfies the predicate if it has the specified asset (utxoHasX sym (Just tn) . txInInfoResolved), if any.
+      case find (utxoHasX sym (Just tn) . txInInfoResolved) (txInfoReferenceInputs info) of --Finds the first element from a list of referenced inputs (txInfoReferenceInputs info returns a list of all refinputs) that satisfies the predicate if it has the specified asset (utxoHasX sym (Just tn) . txInInfoResolved), if any.
         Just txIn ->
           -- {{{
-          getInlineDatum (txInInfoResolved txIn)
+          getInlineDatum (txInInfoResolved txIn) --txInInfoResolved txIn gets the utxo of the given txin.
           -- }}}
-        Nothing   ->
+        Nothing   ->     --   Raises exception if the reference input, or the datum is not found.
           -- {{{
           traceError "Missing reference input."
           -- }}}
@@ -230,7 +223,7 @@ mkQVFValidator QVFParams{..} datum action ctx =
     xInputWithSpecificDatumExists sym tn datumPred =
       -- {{{
       let
-        predicate TxInInfo{txInInfoResolved = txOut} = --Define a function predicate that check if TxInInfo{txInInfoResolved = txOut} is a TxIn) has the specified asset, if it's utxo sits at a script and the datum complies with the given predicate. 
+        predicate TxInInfo{txInInfoResolved = txOut} = --Define a function predicate that checks if TxInInfo{txInInfoResolved = txOut} is a TxIn) has the specified asset, if it's utxo sits at a script and the datum complies with the given predicate. 
           -- {{{
              utxoHasX sym (Just tn) txOut
           && utxoSitsAtScript txOut
@@ -238,18 +231,16 @@ mkQVFValidator QVFParams{..} datum action ctx =
           -- }}}
       in
       isJust $ find predicate inputs --The isJust function returns True iff its argument is of the form Just _
+      -- The find function takes a predicate and a list and returns just the first element in the list matching the predicate, or Nothing if there is no such element.
       -- }}}
 
-    -- | Collection of validations for consuming a set number of donation
-    --   UTxOs, along with the project's UTxO. Outputs are expected to be
-    --   project's UTxO with an updated datum (given), and also a single
-    --   `Donations` UTxO.
+    -- | Collection of validations for consuming a set number of donation UTxOs, along with the project's UTxO. Outputs are expected to be
+    --   project's UTxO with an updated datum (given), and also a single Donations` UTxO.
     --
     --   Raises exception on @False@.
     
     foldDonationsPhaseOne :: Integer -> QVFDatum -> Bool
-    foldDonationsPhaseOne requiredDo
-    nationCount psUpdatedDatum =
+    foldDonationsPhaseOne requiredDonationCount psUpdatedDatum =
       -- {{{
       let
         tn                    = getCurrTokenName qvfProjectSymbol
@@ -930,8 +921,9 @@ mkQVFValidator QVFParams{..} datum action ctx =
       -- {{{
          traceIfFalse
            "Can not conclude with withstanding beneficiaries."
-           (Map.null beneficiaries)
-      && projectMintIsPresent False
+           (Map.null beneficiaries) --checks if the escrow is empty
+      && projectMintIsPresent False --checks if project token is present.
+        -- if both any is false traceError is called.
       -- }}}
 
     (ProjectInfo _                                , ConcludeProject        ) ->
