@@ -35,10 +35,15 @@ import           Text.Printf         (printf)
 mkValidator :: () -> Integer -> ScriptContext -> Bool
 mkValidator _ r _ = traceIfFalse "Wrong Redeemer" --Validation fails with error
 
+-- We need to define a datatype that we can use to identify this typed validator that we are working on. 
+-- This data type is empty, because we’re just going to use it as a “name”: it helps the Haskell type system know what to look for.
+
 -- A new type that encodes the types of the datum and the redeemer to.Typed is an arbitary name. It does need data constructors becuase we are never going to use or don't need data of this type
 -- It is just needed to provide an instance of the class Scripts.ValidatorTypes.
 -- class Scripts.ValidatorTypes (a :: Type): A class that associates a type standing for a connection type with two types, the type of the redeemer and the data script for that connection type.
 data Typed --records that datum and redeemer are using high level types.
+
+-- define an instance of ValidatorTypes for our “name”. This tells the compiler what the Haskell types for the redeemer and datum are, so that the compiler can check whether we’re using the right ones later.
 instance Scripts.ValidatorTypes Typed where --
     type instance DatumType Typed= () --type RedeemerType a :: Type: The type of the redeemers of this connection type. type synonym for ()
     type instance RedeemerType Typed = Integer --type DatumType a :: Type: The type of the data of this connection type.
@@ -50,7 +55,7 @@ typedValidator = Scripts.mkTypedValidator @Typed -- used to force a type decisio
     $$(PlutusTx.compile [|| mkValidator ||])
     $$(PlutusTx.compile [|| wrap ||]) -- offers translation between high and low level types for compilation to Plutus script and back.
   where
-    wrap = Scripts.wrapValidator @() @Integer --translates to hign level types.
+    wrap = Scripts.wrapValidator @() @Integer --translates to and from  low level types.
 
 validator :: Validator
 validator = Scripts.validatorScript typedValidator
@@ -67,7 +72,8 @@ type GiftSchema =
         Endpoint "give" Integer
     .\/ Endpoint "grab" () -- .\/ is used to join the two endpoints.
 
-give :: AsContractError e => Integer -> Contract w s e ()
+-- AsContractError e : is a type level function that takes a type e and returns a type that is an instance of the class AsContractError.https://playground.plutus.iohkdev.io/doc/haddock/playground-common/html/Playground-Contract.html#t:AsContractError
+give :: AsContractError e => Integer -> Contract w s e () 
 give amount = do
     -- mustPayToOtherScript: locks the value v in lovelace with the given script hash vh alongside a datum d of Type Builtins. This operation is saved as tx to be executed in the next line.
     let tx = mustPayToOtherScript valHash (Datum $ Builtins.mkI 0) $ Ada.lovelaceValueOf amount 
@@ -89,7 +95,7 @@ grab = do
     -- Use <- to get the result (Map TxOutRef ChainIndexTxOut) in the contract monad. ChainIndexTxOut: List of outputs of a transaction. TxOutRef: A reference to a transaction output. 
     utxos <- utxosAt scrAddress
     -- Map.toList utxos: takes all the (TxOutRef ChainIndexTxOut) pairs and puts them in a list. fst returns the first value from the pair.
-    -- This grabs the first utxo at the script address. not sure.
+    -- This grabs the first utxo it comes across at the script address. not sure.
     let orefs = fst <$> Map.toList utxos
 
  --"The "constraints" specify what properties the transaction should have.
