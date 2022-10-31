@@ -1,0 +1,6 @@
+Plutus_projects/quadraticVoting/app/CLI.hs
+Plutus_projects/quadraticVoting/src/QVF.hs
+Plutus_projects/quadraticVoting/src/Utils.hs
+Plutus_projects/quadraticVoting/src/Minter/Donation.hs
+Plutus_projects/quadraticVoting/src/Minter/Governance.hs
+Plutus_projects/quadraticVoting/src/Minter/Registration.hs
