@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeFamilies        #-}
 {-# LANGUAGE TypeOperators       #-}
 
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
+-- -- {-# OPTIONS_GHC -fno-warn-unused-imports #-}
 
 module Week02.IsData where
 
