@@ -32,7 +32,7 @@ import           Prelude                (IO, Show (..), String)
 import           Text.Printf            (printf)
 import           Wallet.Emulator.Wallet
 
-{-# INLINABLE mkPolicy #-} --oxford brackets work with functions defined inside them, since mkPolicy is already defined we can use the INLINABLE program to trick it.
+{-# INLINABLE mkPolicy #-} --oxford brackets work with functions defined inside them, since mkPolicy is already defined we can use the INLINABLE pragma to trick it.
 mkPolicy :: () -> ScriptContext -> Bool
 mkPolicy () _ = True --This policy ignores the context and redeemer value always returns True. This will allow arbitrary minting and burning of tokens for value and token name that belongs to the currency symbol associated with this policy.
 
